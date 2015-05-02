@@ -9,6 +9,7 @@ var mapboxTiles = L.tileLayer(url + L.mapbox.accessToken, {
 });
 
 
+
 //gestion du champ de recherche
 $("#rechercher").on("keydown",function search(e) {
     if(e.keyCode == 13) {
@@ -17,9 +18,11 @@ $("#rechercher").on("keydown",function search(e) {
 });
 
 $("#validRecherche").on("click", function () {
+    $("#loader").show();
     var geocoder = L.mapbox.geocoder('mapbox.places');
     geocoder.query($("#rechercher").val(), showMap);
     function showMap(err,data) {
+ 	$("#loader").hide();
         if (data.latlng) {
             map.setView([data.latlng[0], data.latlng[1]], 17);
         }
