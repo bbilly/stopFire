@@ -8,7 +8,27 @@ var mapboxTiles = L.tileLayer(url + L.mapbox.accessToken, {
     attribution: '<a href="http://www.mapbox.com/about/maps/" target="_blank">Terms &amp; Feedback</a>'
 });
 
+var map = L.map('map')
+    .addLayer(mapboxTiles)
+    .setView([47.466667, -0.55], 16);
 
+ var markers = new L.MarkerClusterGroup();
+
+$.ajax({
+dataType: "json",
+url: "bornes_incendies_angers.json",
+success: function(data) {
+    $(data.features).each(function(key, data) {
+      var marker = L.marker(new L.LatLng(data.geometry.coordinates[1], data.geometry.coordinates[0]), {
+          icon: L.mapbox.marker.icon({'marker-symbol': 'water', 'marker-color': 'c0392b'})
+      });
+      marker.bindPopup(data.properties.ADRESSE +"<br/>" + "<b>Débit : </b>"+data.properties.DEBIT+" m3/h",{showOnMouseOver : true});
+      markers.addLayer(marker);
+    });
+}
+}).error(function() {});
+
+map.addLayer(markers);
 
 //gestion du champ de recherche
 $("#rechercher").on("keydown",function search(e) {
@@ -29,58 +49,7 @@ $("#validRecherche").on("click", function () {
     }
 });
 
-var map = L.map('map')
-    .addLayer(mapboxTiles)
-    .setView([47.466667, -0.55], 16);
-
-var markers = new Array();
-map.on('moveend', onMapMove);
-function onMapMove(e) {
-    if(map.getZoom() >= 16) {
-        $(".error").hide();
-        populate();
-    }
-    else {
-        $(".error").show();
-        removeMarkers()
-    }
-}
-
-function populate() {
-    removeMarkers();
-    var bounds = map.getBounds();
-    var minll = bounds.getSouthWest();
-    var maxll = bounds.getNorthEast();
-    getBornes(minll.lat, maxll.lat, minll.lng, maxll.lng);
-}
-
-function getBornes(lat_min,lat_max,long_min,long_max) {
-    $.ajax({
-        method: "POST",
-        url: "getBornes.php",
-        data: {
-            lat_min: lat_min,
-            lat_max: lat_max,
-            long_min : long_min,
-            long_max : long_max
-        },
-        dataType : "json"
-    }).done(function( bornes ) {
-        for (i in bornes) {
-            var lat_borne = bornes[i].geometry.coordinates[1];
-            var long_borne = bornes[i].geometry.coordinates[0];
-            var marker = L.marker([lat_borne, long_borne]).addTo(map);
-            marker.bindPopup(bornes[i].properties.ADRESSE +"<br/>" + "<b>Débit : </b>"+bornes[i].properties.DEBIT+" m3/h",{showOnMouseOver : true});
-            markers.push(marker);
-            map.addLayer(markers[i]);
-        }
-    });
-}
-
-function removeMarkers() {
-    for(i=0;i<markers.length;i++) {
-        map.removeLayer(markers[i]);
-    }
-}
-
-populate();
+// gestion de la géoloc
+var lc = L.control.locate().addTo(map);
+// request location update and set location
+lc.start();

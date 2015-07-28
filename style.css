@@ -11,3 +11,11 @@ p{
   height: 100%;
   z-index: 9999;
   background: url('./loader.GIF') 50% 50% no-repeat rgba(249,249,249,0.8);
+
+html {
+  margin : 0;
+  padding : 0;
+  background: url('./background2.jpg') no-repeat center fixed;
+  -webkit-background-size: cover!important;
+  background-size: cover!important;
+}
