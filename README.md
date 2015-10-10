@@ -1,4 +1,11 @@
 # Stop Fire (version Web)
 Carte des bornes incendies sur Angers Loire Metropole
 
-DEMO sur <a href="http://dev.baptistebilly.com/stopFire/">http://dev.baptistebilly.com/stopFire/</a>
+## Technos
+* HTML5/CSS/Javscript
+* Leaflet
+* Foundation
+* MapBox
+
+## Démonstration
+<a href="http://www.baptistebilly.com/stopFire/">http://www.baptistebilly.com/stopFire/</a>
